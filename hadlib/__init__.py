@@ -52,22 +52,20 @@ def opt_filter (options, cflags, lflags) :
     pos = 0
     while pos < len(options) :
         if options[pos] in ("-l", "-L") :
-            if lflags :
-                yield options[pos]
-                yield options[pos+1]
+            lflags.add(options[pos])
+            lflags.add(options[pos+1])
             pos += 1
         elif options[pos].startswith("-l") or options[pos].startswith("-L") :
-            if lflags :
-                yield options[pos]
+            lflags.add(options[pos])
         elif options[pos] == "-pthread" :
-            yield options[pos]
+            cflags.add(options[pos])
+            lflags.add(options[pos])
         elif options[pos].startswith("-") and len(options[pos]) == 2 :
-            if cflags :
-                yield options[pos]
-                yield options[pos+1]
+            cflags.add(options[pos])
+            cflags.add(options[pos+1])
             pos += 1
-        elif cflags :
-            yield options[pos]
+        else :
+            cflags.add(options[pos])
         pos += 1
 
 def getopt (sources, platform, cc, macros=[], actual=False, cflags=True, lflags=True) :
@@ -83,6 +81,7 @@ def getopt (sources, platform, cc, macros=[], actual=False, cflags=True, lflags=
                          source=f"{platform}.cfg")
     except FileNotFoundError :
         raise HadError(f"platform {platform!r} not supported")
+    lflags, cflags = set(), set()
     for dep in deps.sections() :
         for hdr in headers :
             if fnmatch.fnmatch(hdr, dep) :
@@ -91,6 +90,7 @@ def getopt (sources, platform, cc, macros=[], actual=False, cflags=True, lflags=
                         opt = deps[dep][deps[dep][cc].lstrip("$")]
                     else :
                         opt = deps[dep][cc]
-                    yield from opt_filter(opt.split(), cflags, lflags)
+                    opt_filter(opt.split(), cflags, lflags)
                 elif "pkg-config" in deps[dep] :
-                    yield from pkg_config(deps[dep]["pkg-config"], cc, cflags, lflags)
+                    pkg_config(deps[dep]["pkg-config"], cc, cflags, lflags)
+    return lflags, cflags

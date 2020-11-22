@@ -27,9 +27,10 @@ def main (argv=None) :
     if not (args.lflags or args.cflags) :
         args.lflags = True
     try :
-        print(" ".join(getopt(args.sources, args.platform.lower(),
-                              args.cc.lower(), args.macro, args.actual,
-                              args.cflags, args.lflags)))
+        lflags, cflags = getopt(args.sources, args.platform.lower(),
+                                args.cc.lower(), args.macro, args.actual)
+        print(" ".join((lflags if args.lflags else set())
+                       | (cflags if args.cflags else set())))
     except HadError as err :
         parser.exit(1, f"{parser.prog}: {err}\n")
 
