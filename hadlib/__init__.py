@@ -1,3 +1,5 @@
+VERSION = "0.1.1"
+
 import re, subprocess, pathlib, configparser, pkgutil, fnmatch
 
 class HadError (Exception) :

@@ -24,5 +24,5 @@ setup(name="Headers as Dependencies",
       packages=find_packages(where="."),
       python_requires=">=3.7",
       install_requires=[],
-      package_data={},
+      package_data={"" : ["*.cfg"]},
       entry_points={"console_scripts": ["had=hadlib.cli:main"]})
