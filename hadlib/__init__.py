@@ -83,7 +83,7 @@ def getopt (sources, platform, cc, macros=[], actual=False, cflags=True, lflags=
                          source=f"{platform}.cfg")
     except FileNotFoundError :
         raise HadError(f"platform {platform!r} not supported")
-    lflags, cflags = set(), set()
+    lf, cf = set(), set()
     for dep in deps.sections() :
         for hdr in headers :
             if fnmatch.fnmatch(hdr, dep) :
@@ -92,7 +92,8 @@ def getopt (sources, platform, cc, macros=[], actual=False, cflags=True, lflags=
                         opt = deps[dep][deps[dep][cc].lstrip("$")]
                     else :
                         opt = deps[dep][cc]
-                    opt_filter(opt.split(), cflags, lflags)
+                    opt_filter(opt.split(), cf, lf)
                 elif "pkg-config" in deps[dep] :
-                    pkg_config(deps[dep]["pkg-config"], cc, cflags, lflags)
-    return lflags, cflags
+                    opt_filter(pkg_config(deps[dep]["pkg-config"], cc, cflags, lflags),
+                               cf, lf)
+    return lf, cf
