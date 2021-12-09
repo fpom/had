@@ -8,7 +8,7 @@ class HadError (Exception) :
 _include = re.compile(r"^\s*#include\s*<([^>]+)>\s*$")
 
 def src_parse (path) :
-    for line in open(path) :
+    for line in open(path, encoding="utf-8", errors="replace") :
         match = _include.match(line)
         if match :
             yield match.group(1)
