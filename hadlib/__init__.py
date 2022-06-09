@@ -1,4 +1,4 @@
-VERSION = "0.2"
+VERSION = "0.3"
 
 import re, subprocess, pathlib, configparser, pkgutil, fnmatch, shlex
 
